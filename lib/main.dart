@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../screens/weather_screen.dart'; // Update with your actual path
+import 'screens/landing_page.dart'; // Import LandingPage
 
 void main() {
-  runApp(ProviderScope(
-    child: MyApp(),
-  ));
+  runApp(
+    ProviderScope( // Wrap with ProviderScope
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -14,9 +16,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Weather App',
       theme: ThemeData(
-        primarySwatch: Colors.orange,
+        primarySwatch: Colors.blue,
       ),
-      home: WeatherScreen(city: 'Jakarta'), // Pass the 'city' parameter here
+      home: LandingPage(), // Set LandingPage as the starting point
     );
   }
 }
