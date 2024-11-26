@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'landing_page.dart'; // Ganti dengan halaman utama Anda
+import 'landing_page.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -15,20 +15,19 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Rotation controller
     _rotationController = AnimationController(
       duration: const Duration(seconds: 3),
       vsync: this,
-    )..repeat(); // Rotasi terus menerus
+    )..repeat(); 
 
-    // Fade-in animation for the text
+    // fade in
     Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         _opacity = 1.0;
       });
     });
 
-    // Navigasi ke halaman utama setelah 3 detik
+    // 3 sec durasi
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
@@ -51,17 +50,16 @@ class _SplashScreenState extends State<SplashScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Rotating Icon
             RotationTransition(
               turns: _rotationController,
-              child: Icon(
+              child: const Icon(
                 Icons.wb_sunny,
                 size: 60,
                 color: Colors.amberAccent,
               ),
             ),
             const SizedBox(height: 16),
-            // Fade-in Text
+
             AnimatedOpacity(
               opacity: _opacity,
               duration: const Duration(seconds: 2),
