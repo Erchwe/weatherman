@@ -39,21 +39,23 @@ class WeatherService {
     }
   }  
 
-  Future<List<dynamic>> fetchForecast(String city, int hours) async {
-    final url = Uri.parse(
-        'https://$apiHost/forecast.json?q=$city&days=1');
-
-    final response = await http.get(url, headers: {
+Future<List<dynamic>> fetchForecast(String city, int hours) async {
+  final response = await http.get(
+    Uri.parse(
+      'https://weatherapi-com.p.rapidapi.com/forecast.json?q=$city&hours=$hours',
+    ),
+    headers: {
       'x-rapidapi-host': apiHost,
       'x-rapidapi-key': apiKey,
-    });
+    },
+  );
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final List<dynamic> forecastHours = data['forecast']['forecastday'][0]['hour'];
-      return forecastHours.sublist(0, hours); 
-    } else {
-      throw Exception('Failed to load forecast data');
-    }
+  if (response.statusCode == 200) {
+    final jsonResponse = jsonDecode(response.body);
+    return jsonResponse['forecast']['forecastday'][0]['hour'];
+  } else {
+    throw Exception('Failed to fetch forecast');
   }
+}
+
 }
