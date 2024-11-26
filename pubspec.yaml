@@ -9,9 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.3
+  http: ^0.13.6
   flutter_riverpod: ^1.0.0
   font_awesome_flutter: ^9.0.0
+  lottie: ^2.3.0 
 
 dev_dependencies:
   flutter_test:
@@ -21,3 +22,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/weather_animation.json
