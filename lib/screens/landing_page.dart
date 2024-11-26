@@ -72,7 +72,8 @@ class LandingPage extends StatelessWidget {
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(
-                  labelText: 'Enter your name',
+                  hintText: "Enter your name",
+                  hintStyle: TextStyle(color: Colors.purple),
                   labelStyle: TextStyle(
                     color: Colors.purple,
                   ),
@@ -91,7 +92,8 @@ class LandingPage extends StatelessWidget {
               TextField(
                 controller: cityController,
                 decoration: const InputDecoration(
-                  labelText: 'Enter your city',
+                  hintText: "Enter your city",
+                  hintStyle: TextStyle(color: Colors.purple),
                   labelStyle: TextStyle(
                     color: Colors.purple, 
                   ),

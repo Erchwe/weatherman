@@ -17,7 +17,7 @@ class Weather {
     return Weather(
       location: json['location']['name'],
       country: json['location']['country'],
-      temperature: json['current']['temp_c'],
+      temperature: json['current']['temp_c'].toDouble(),
       condition: json['current']['condition']['text'],
       iconUrl: 'https:${json['current']['condition']['icon']}',
     );
