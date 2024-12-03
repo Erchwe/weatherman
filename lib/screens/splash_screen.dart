@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'auth_page.dart'; // Ganti dengan halaman utama Anda
+import 'auth_page.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

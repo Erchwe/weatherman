@@ -1,3 +1,4 @@
+import 'package:fieldview/screens/landing_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'weather_screen.dart'; // make sure this screen is properly imported
@@ -21,7 +22,7 @@ class AuthPage extends StatelessWidget {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => WeatherScreen(
+            builder: (context) => LandingPage(
                 userName: emailController.text,
                 city: "Bandung")), // Adjust WeatherScreen to your needs
       );
