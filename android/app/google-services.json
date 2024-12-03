@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1098083583047",
+    "project_id": "weatherman-c482a",
+    "storage_bucket": "weatherman-c482a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1098083583047:android:f238c407e0a89139815d62",
+        "android_client_info": {
+          "package_name": "com.weatherman.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZi4Wkp65_stoFlgfmNA5EGAsd0pNvgss"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

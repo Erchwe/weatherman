@@ -10,9 +10,9 @@ class WeatherScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final weatherAsyncValue = ref.watch(weatherProvider(city)); // Current weather provider
-    final alertAsyncValue = ref.watch(alertProvider(city)); // Alerts provider
-    final forecastAsyncValue = ref.watch(forecastProvider(city)); // 6-hour forecast provider
+    final weatherAsyncValue = ref.watch(weatherProvider(city)); 
+    final alertAsyncValue = ref.watch(alertProvider(city));
+    final forecastAsyncValue = ref.watch(forecastProvider(city));
 
     return Scaffold(
       appBar: AppBar(
@@ -120,7 +120,7 @@ class WeatherScreen extends ConsumerWidget {
                         Expanded(
                           child: forecastAsyncValue.when(
                             data: (forecast) {
-                              // Filter data 6 jam ke depan
+                              // Filter data 4 jam ke depan
                               final forecastFiltered = forecast.where((hour) {
                                 final now = DateTime.now();
                                 final forecastTime = DateTime.parse(hour['time']);

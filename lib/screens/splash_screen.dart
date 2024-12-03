@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'landing_page.dart'; // Ganti dengan halaman utama Anda
+import 'auth_page.dart'; // Ganti dengan halaman utama Anda
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen>
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LandingPage()),
+        MaterialPageRoute(builder: (context) => AuthPage()),
       );
     });
   }
