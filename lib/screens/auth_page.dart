@@ -1,30 +1,97 @@
 import 'package:fieldview/screens/landing_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'weather_screen.dart'; // make sure this screen is properly imported
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
 
-class AuthPage extends StatelessWidget {
+class AuthPage extends StatefulWidget {
+  @override
+  _AuthPageState createState() => _AuthPageState();
+}
+
+class _AuthPageState extends State<AuthPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool rememberMe = false;
 
-  // Sign-in method
-  Future signIn(BuildContext context) async {
+  @override
+  void initState() {
+    super.initState();
+    _checkRememberMe();
+  }
+
+  Future<void> _checkRememberMe() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedEmail = prefs.getString('email');
+    final savedPassword = prefs.getString('password');
+
+    if (savedEmail != null && savedPassword != null) {
+      emailController.text = savedEmail;
+      passwordController.text = savedPassword;
+      setState(() {
+        rememberMe = true;
+      });
+      _autoLogin(savedEmail, savedPassword);
+    }
+  }
+
+  Future<void> _autoLogin(String email, String password) async {
     try {
-      // Sign in with email and password
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+        email: email,
+        password: password,
       );
-      print('Signed in successfully');
-
-      // Navigate to WeatherScreen on successful sign-in
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => LandingPage(
-                userName: emailController.text,
-                city: "Bandung")), // Adjust WeatherScreen to your needs
+          builder: (context) => LandingPage(userName: email, city: "Bandung"),
+        ),
+      );
+    } catch (e) {
+      print("Auto-login failed: $e");
+    }
+  }
+
+  Future<void> _saveCredentials(String email, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (rememberMe) {
+      await prefs.setString('email', email);
+      await prefs.setString('password', password);
+    } else {
+      await prefs.remove('email');
+      await prefs.remove('password');
+    }
+  }
+
+  Future<void> logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('email');
+    await prefs.remove('password');
+    await FirebaseAuth.instance.signOut();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => AuthPage()),
+    );
+  }
+
+  Future<void> _signIn(BuildContext context) async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      await _saveCredentials(email, password);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LandingPage(userName: email, city: "Bandung"),
+        ),
       );
     } catch (e) {
       print("Sign-in failed: $e");
@@ -32,12 +99,6 @@ class AuthPage extends StatelessWidget {
         SnackBar(content: Text('Sign-in failed: $e')),
       );
     }
-  }
-
-  @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
   }
 
   @override
@@ -73,7 +134,6 @@ class AuthPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              // lottie animation
               Lottie.asset(
                 'assets/weather_animation.json',
                 height: 200,
@@ -90,16 +150,6 @@ class AuthPage extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // quote
-              const Text(
-                '"There’s no such thing as bad weather, only different kinds of good weather." – John Ruskin',
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  color: Colors.deepPurple,
-                  fontSize: 14,
-                ),
-              ),
               const SizedBox(height: 24),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -108,9 +158,6 @@ class AuthPage extends StatelessWidget {
                   decoration: const InputDecoration(
                     hintText: "Email",
                     hintStyle: TextStyle(color: Colors.purple),
-                    labelStyle: TextStyle(
-                      color: Colors.purple,
-                    ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.purple),
                     ),
@@ -127,13 +174,10 @@ class AuthPage extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
                   controller: passwordController,
-                  obscureText: true, // Hide password text
+                  obscureText: true,
                   decoration: const InputDecoration(
                     hintText: "Password",
                     hintStyle: TextStyle(color: Colors.purple),
-                    labelStyle: TextStyle(
-                      color: Colors.purple,
-                    ),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.purple),
                     ),
@@ -146,22 +190,37 @@ class AuthPage extends StatelessWidget {
                   style: const TextStyle(color: Colors.black),
                 ),
               ),
-
+              Row(
+                children: [
+                  Checkbox(
+                    value: rememberMe,
+                    onChanged: (value) {
+                      setState(() {
+                        rememberMe = value ?? false;
+                      });
+                    },
+                  ),
+                  const Text(
+                    "Remember Me",
+                    style: TextStyle(color: Colors.deepPurple),
+                  ),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    onPressed: () {
-                      // Call sign-in method on button press
-                      signIn(context);
-                    },
-                    child: const Text("Sign In")),
+                  ),
+                  onPressed: () {
+                    _signIn(context);
+                  },
+                  child: const Text("Sign In"),
+                ),
               ),
             ],
           ),

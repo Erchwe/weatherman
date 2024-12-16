@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../providers/weather_provider.dart';
+import '../providers/favorites_provider.dart';
+import 'favorites_screen.dart';
+import 'auth_page.dart';
 
 class WeatherScreen extends ConsumerWidget {
   final String userName;
@@ -8,26 +14,74 @@ class WeatherScreen extends ConsumerWidget {
 
   WeatherScreen({required this.userName, required this.city});
 
+    Future<void> logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('email');
+    await prefs.remove('password');
+    await FirebaseAuth.instance.signOut();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => AuthPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final weatherAsyncValue = ref.watch(weatherProvider(city)); 
+    final weatherAsyncValue = ref.watch(weatherProvider(city));
     final alertAsyncValue = ref.watch(alertProvider(city));
     final forecastAsyncValue = ref.watch(forecastProvider(city));
+    final favoriteCities = ref.watch(favoriteCitiesProvider);
+    final isFavorite = favoriteCities.contains(city);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.wb_sunny, size: 28, color: Colors.amberAccent),
-            SizedBox(width: 8),
+            const Icon(Icons.wb_sunny, size: 28, color: Colors.amberAccent),
+            const SizedBox(width: 8),
             Text(
               'WeatherMan',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.amberAccent,
               ),
+            ),
+            const Spacer(),
+            // Icon favorit untuk menyimpan kota
+            IconButton(
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: Colors.red,
+              ),
+              onPressed: () {
+                final notifier = ref.read(favoriteCitiesProvider.notifier);
+                if (isFavorite) {
+                  notifier.removeCity(city);
+                } else {
+                  notifier.addCity(city);
+                }
+              },
+            ),
+            // Navigation ke halaman favorites
+            IconButton(
+              icon: const Icon(Icons.list, color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FavoritesScreen(userName: userName),
+                  ),
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.logout, color: Colors.white),
+              onPressed: () async {
+                await logout(context); // Memanggil fungsi logout yang baru
+              },
             ),
           ],
         ),
@@ -143,7 +197,7 @@ class WeatherScreen extends ConsumerWidget {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                  color: Colors.lightBlue[50],
+                                    color: Colors.lightBlue[50],
                                     child: ListTile(
                                       leading: Image.network(
                                         'https:${hour['condition']['icon']}',
